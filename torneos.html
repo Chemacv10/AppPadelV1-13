@@ -14,7 +14,7 @@
   <main class="content">
     <div class="sec">
       <img src="icons/torneos.png">
-      <div class="sec-title">Torneos</div>
+      <div class="sec-title">Torneos <button onclick="abrirInfoTipo()" style="background:none;border:none;font-size:12px;font-weight:800;color:#2563eb;cursor:pointer;padding:0;text-decoration:underline">Info.</button></div>
       <div class="sec-count" id="contador">—</div>
     </div>
 
@@ -47,10 +47,7 @@
       </div>
       <div class="frow">
         <div class="fgrp">
-          <div class="flbl" style="display:flex;align-items:center;justify-content:space-between">
-            Tipo
-            <button type="button" onclick="abrirInfoTipo()" style="background:none;border:none;font-size:10px;font-weight:800;color:#2563eb;cursor:pointer;padding:0;text-decoration:underline">info</button>
-          </div>
+          <div class="flbl">Tipo</div>
           <select class="fsel" id="to-tipo" onchange="onTipoChange()">
             <option>Americano</option>
             <option>Mexicano</option>
