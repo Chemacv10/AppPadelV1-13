@@ -78,7 +78,9 @@
     <div class="sec">
       <img src="icons/inicio.png" alt="Inicio">
       <div class="sec-title">Inicio</div>
-    </div>
+    
+    <button class="sbtn" onclick="abrirInfo()" style="margin-bottom:8px">Info.</button>
+</div>
 
     <!-- 1. PRÓXIMAS CLASES -->
     <div class="ini-sec">
@@ -188,6 +190,19 @@
   </div>
 
 </div>
+
+
+  <!-- Sheet info página -->
+  <div class="overlay" id="sh-info-pagina">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Inicio</div>
+      <div style="font-size:14px;font-weight:600;color:var(--sub);line-height:1.65;padding-bottom:8px">Panel principal de tu escuela. Muestra las próximas clases programadas, los últimos torneos y el ranking de jugadores. Desde aquí también accedes a la configuración de la escuela y a generar cobros del mes.</div>
+      <div class="sheet-btns">
+        <button class="sbtn prim" style="flex:1" onclick="closeSheet('sh-info-pagina')">Entendido</button>
+      </div>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
@@ -465,6 +480,10 @@ async function init() {
     console.error(err);
     ['lista-proximas','lista-torneos','lista-top','lista-ejercicios'].forEach(id => showError(id,'Error al cargar'));
   }
+}
+
+function abrirInfo() {
+  openSheet('sh-info-pagina');
 }
 
 init();

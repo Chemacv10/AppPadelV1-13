@@ -41,7 +41,9 @@
     <div class="sec">
       <img src="icons/alumnos.png">
       <div class="sec-title">Alumnos</div>
-      <div class="sec-count" id="contador">—</div>
+      
+    <button class="sbtn" onclick="abrirInfo()" style="margin-bottom:8px">Info.</button>
+<div class="sec-count" id="contador">—</div>
     </div>
 
     <!-- Buscador -->
@@ -160,6 +162,19 @@
   </div>
 
 </div>
+
+
+  <!-- Sheet info página -->
+  <div class="overlay" id="sh-info-pagina">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Alumnos</div>
+      <div style="font-size:14px;font-weight:600;color:var(--sub);line-height:1.65;padding-bottom:8px">Gestiona todos los alumnos de tu escuela. Puedes crear fichas con sus datos, asignarles un grupo y nivel, ver su historial de cobros y notificarles por email o WhatsApp cuando una clase cambia.</div>
+      <div class="sheet-btns">
+        <button class="sbtn prim" style="flex:1" onclick="closeSheet('sh-info-pagina')">Entendido</button>
+      </div>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
@@ -462,6 +477,10 @@ async function init() {
   actualizarFiltrosNivel();
 
   await Promise.all([cargarGrupos(), cargar()]);
+}
+
+function abrirInfo() {
+  openSheet('sh-info-pagina');
 }
 
 init();

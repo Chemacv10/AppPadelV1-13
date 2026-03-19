@@ -58,7 +58,9 @@
     <div class="sec">
       <img src="icons/stats.png">
       <div class="sec-title">Estadísticas</div>
-    </div>
+    
+    <button class="sbtn" onclick="abrirInfo()" style="margin-bottom:8px">Info.</button>
+</div>
 
     <!-- Sección — iconos fbtn igual que el resto de la app -->
     <div class="filter-label">Sección</div>
@@ -101,6 +103,19 @@
 
   </main>
 </div>
+
+
+  <!-- Sheet info página -->
+  <div class="overlay" id="sh-info-pagina">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Estadísticas</div>
+      <div style="font-size:14px;font-weight:600;color:var(--sub);line-height:1.65;padding-bottom:8px">Resumen de toda la actividad de tu escuela: alumnos, grupos, clases, ejercicios, torneos y cobros. Filtrable por mes y año. Útil para ver tendencias y detectar alumnos sin pagar o sin grupo asignado.</div>
+      <div class="sheet-btns">
+        <button class="sbtn prim" style="flex:1" onclick="closeSheet('sh-info-pagina')">Entendido</button>
+      </div>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
@@ -720,6 +735,10 @@ async function init() {
   renderNav('stats');
   await cargar();
 }
+function abrirInfo() {
+  openSheet('sh-info-pagina');
+}
+
 init();
 </script>
 </body>

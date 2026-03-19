@@ -104,7 +104,9 @@
     <div class="sec">
       <img src="icons/clases.png">
       <div class="sec-title">Clases</div>
-      <div class="sec-count" id="contador">—</div>
+      
+    <button class="sbtn" onclick="abrirInfo()" style="margin-bottom:8px">Info.</button>
+<div class="sec-count" id="contador">—</div>
     </div>
     <!-- Buscador -->
     <div class="search">
@@ -333,6 +335,19 @@
     </div>
   </div>
 </div>
+
+
+  <!-- Sheet info página -->
+  <div class="overlay" id="sh-info-pagina">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Clases</div>
+      <div style="font-size:14px;font-weight:600;color:var(--sub);line-height:1.65;padding-bottom:8px">Registra cada sesión con su grupo, estado, asistencia y ejercicios realizados. Puedes notificar a los alumnos si una clase se suspende o cambia. Al guardar, se crea automáticamente un bloque en el calendario de pistas.</div>
+      <div class="sheet-btns">
+        <button class="sbtn prim" style="flex:1" onclick="closeSheet('sh-info-pagina')">Entendido</button>
+      </div>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
@@ -903,6 +918,10 @@ async function _actualizarBloqueInfo(){
     info.innerHTML=`⚠️ Sin semana de pistas para esta fecha`;
     wrap.style.display='block';
   }
+}
+
+function abrirInfo() {
+  openSheet('sh-info-pagina');
 }
 
 init();

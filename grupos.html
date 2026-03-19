@@ -60,7 +60,9 @@
     <div class="sec">
       <img src="icons/grupos.png">
       <div class="sec-title">Grupos</div>
-      <div class="sec-count" id="contador">—</div>
+      
+    <button class="sbtn" onclick="abrirInfo()" style="margin-bottom:8px">Info.</button>
+<div class="sec-count" id="contador">—</div>
     </div>
 
     <!-- Buscador -->
@@ -198,6 +200,19 @@
   </div>
 
 </div>
+
+
+  <!-- Sheet info página -->
+  <div class="overlay" id="sh-info-pagina">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Grupos</div>
+      <div style="font-size:14px;font-weight:600;color:var(--sub);line-height:1.65;padding-bottom:8px">Un grupo define el "contrato" completo de una clase fija: alumnos, horario, pista, monitor e importe mensual. Al crear una clase de ese grupo, la pista y el horario se rellenan solos.</div>
+      <div class="sheet-btns">
+        <button class="sbtn prim" style="flex:1" onclick="closeSheet('sh-info-pagina')">Entendido</button>
+      </div>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
@@ -585,6 +600,10 @@ async function init() {
   chipRegistrarLista('monitores', _cfgMonitores);
   chipRegistrarLista('niveles',   _cfgNiveles);
   fillDropdowns();
+}
+
+function abrirInfo() {
+  openSheet('sh-info-pagina');
 }
 
 init();
