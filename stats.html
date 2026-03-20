@@ -545,23 +545,35 @@ async function cargar() {
 
     const [
       alumnos, grupos, ejerciciosActivos, ejerciciosTodos,
-      clases, claseAsistencia, claseEjercicios,
-      torneos, participantes, partidos,
-      cobros, semanas,
+      clases, torneos, cobros, semanas,
     ] = await Promise.all([
       _sb.from('alumnos').select('id,nivel,created_at,grupo_id').eq('escuela_id',Store.escuelaId),
       _sb.from('grupos').select('id,nombre,nivel,monitor,pista').eq('escuela_id',Store.escuelaId).order('nombre'),
       _sb.from('ejercicios').select('id,nombre,usos,categoria,activo').eq('escuela_id',Store.escuelaId),
       _sb.from('ejercicios').select('id').eq('escuela_id',Store.escuelaId),
       _sb.from('clases').select('id,estado,fecha,grupo_id,tipo_clase').eq('escuela_id',Store.escuelaId),
-      _sb.from('clase_asistencia').select('clase_id,asistio'),
-      _sb.from('clase_ejercicios').select('clase_id').eq('realizado',true),
       _sb.from('torneos').select('id,nombre,tipo,estado').eq('escuela_id',Store.escuelaId),
-      _sb.from('participantes').select('torneo_id,nombre'),
-      _sb.from('partidos').select('torneo_id,resultado_a,resultado_b,pareja_a,pareja_b').not('resultado_a','is',null),
       _sb.from('cobros').select('id,importe,fecha,forma_pago,tipo,alumno_id').eq('escuela_id',Store.escuelaId),
       _sb.from('semanas_pista').select('id').eq('escuela_id',Store.escuelaId),
     ]);
+
+    // Cargar asistencia y ejercicios solo de las clases de esta escuela
+    const claseIds = (clases.data||[]).map(c=>c.id);
+    let claseAsistencia = {data:[]}, claseEjercicios = {data:[]};
+    let participantes = {data:[]}, partidos = {data:[]};
+    if (claseIds.length) {
+      [claseAsistencia, claseEjercicios] = await Promise.all([
+        _sb.from('clase_asistencia').select('clase_id,asistio').in('clase_id',claseIds),
+        _sb.from('clase_ejercicios').select('clase_id').eq('realizado',true).in('clase_id',claseIds),
+      ]);
+    }
+    const torneoIds2 = (torneos.data||[]).map(t=>t.id);
+    if (torneoIds2.length) {
+      [participantes, partidos] = await Promise.all([
+        _sb.from('participantes').select('torneo_id,nombre').in('torneo_id',torneoIds2),
+        _sb.from('partidos').select('torneo_id,resultado_a,resultado_b,pareja_a,pareja_b').not('resultado_a','is',null).in('torneo_id',torneoIds2),
+      ]);
+    }
 
     const filtrar = (arr,campo) => (arr||[]).filter(x => (!desdeStr || x[campo] >= desdeStr) && (!hastaStr || x[campo] <= hastaStr));
     const clasesF = filtrar(clases.data,'fecha');
