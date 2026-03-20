@@ -476,7 +476,7 @@ function renderCobros() {
     </div>` : ''}
     ${sinPagar.length ? `
     <div class="stats-sec">
-      ${secHdr('icons/mensual.png','Sin pago mensual en ${d.mesActual||''}')}
+      ${secHdr('icons/mensual.png',`Sin pago mensual en ${d.mesActual||''}`)}
       <div style="font-size:12px;color:var(--sutil);font-weight:600;line-height:1.8">
         ${sinPagar.map(a=>`<span style="display:inline-block;background:#f1f5f9;border-radius:7px;padding:2px 8px;margin:2px;font-weight:700;color:var(--texto)">${a.nombre||'—'}</span>`).join('')}
       </div>
