@@ -547,7 +547,7 @@ async function cargar() {
       alumnos, grupos, ejerciciosActivos, ejerciciosTodos,
       clases, torneos, cobros, semanas,
     ] = await Promise.all([
-      _sb.from('alumnos').select('id,nivel,created_at,grupo_id').eq('escuela_id',Store.escuelaId),
+      _sb.from('alumnos').select('id,nombre,nivel,created_at,grupo_id').eq('escuela_id',Store.escuelaId),
       _sb.from('grupos').select('id,nombre,nivel,monitor,pista').eq('escuela_id',Store.escuelaId).order('nombre'),
       _sb.from('ejercicios').select('id,nombre,usos,categoria,activo').eq('escuela_id',Store.escuelaId),
       _sb.from('ejercicios').select('id').eq('escuela_id',Store.escuelaId),
