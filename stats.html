@@ -733,8 +733,8 @@ async function cargar() {
     };
     renderStats();
   } catch(e) {
-    showError('stats-contenido','Error al cargar estadísticas');
-    console.error(e);
+    showError('stats-contenido','Error al cargar estadísticas: ' + (e?.message || e?.toString() || JSON.stringify(e)));
+    console.error('Stats error completo:', e);
   }
 }
 
