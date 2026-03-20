@@ -65,7 +65,24 @@
 
       <!-- Navegador de semana -->
       <div id="se-fecha-wrap">
-        <div class="flbl" style="margin-bottom:8px">Semana</div>
+        <div class="frow" style="margin-bottom:8px">
+          <div class="fgrp">
+            <div class="flbl">Mes</div>
+            <select class="fsel" id="se-mes" onchange="irAMesAnio()">
+              <option value="0">Enero</option><option value="1">Febrero</option>
+              <option value="2">Marzo</option><option value="3">Abril</option>
+              <option value="4">Mayo</option><option value="5">Junio</option>
+              <option value="6">Julio</option><option value="7">Agosto</option>
+              <option value="8">Septiembre</option><option value="9">Octubre</option>
+              <option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <div class="flbl">Año</div>
+            <select class="fsel" id="se-anio" onchange="irAMesAnio()"></select>
+          </div>
+        </div>
+        <div class="flbl" style="margin-bottom:6px">Semana</div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
           <button onclick="navegarSemana(-1)" style="width:40px;height:40px;border-radius:10px;border:1.5px solid var(--borde);background:var(--card);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">‹</button>
           <div id="semana-preview" style="flex:1;text-align:center;font-size:14px;font-weight:800;color:var(--texto);background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:10px 8px"></div>
@@ -245,12 +262,27 @@ function actualizarPreviewSemana(lunes){
   prev.textContent=`${d.getDate()} ${m[d.getMonth()]} — ${fin.getDate()} ${m[fin.getMonth()]} ${fin.getFullYear()}`;
 }
 
+function irAMesAnio(){
+  const mes  = +document.getElementById('se-mes').value;
+  const anio = +document.getElementById('se-anio').value;
+  // Ir al primer lunes del mes seleccionado
+  const primerDia = new Date(anio, mes, 1);
+  const lunes = lunesDe(primerDia.toISOString().slice(0,10));
+  actualizarPreviewSemana(lunes);
+}
+
 function navegarSemana(dir){
   const actual=document.getElementById('se-fecha').value;
   if(!actual) return;
   const d=new Date(actual+'T12:00:00');
   d.setDate(d.getDate()+(dir*7));
   const nuevo=d.toISOString().slice(0,10);
+  // Actualizar selectores mes/año al navegar
+  const nd=new Date(nuevo+'T12:00:00');
+  const selMes=document.getElementById('se-mes');
+  const selAnio=document.getElementById('se-anio');
+  if(selMes) selMes.value=nd.getMonth();
+  if(selAnio) selAnio.value=nd.getFullYear();
   actualizarPreviewSemana(nuevo);
 }
 
@@ -267,6 +299,8 @@ function editarSemana(id, numPistasActual, fechaInicio){
   // Fecha bloqueada — solo muestra, no se puede navegar
   actualizarPreviewSemana(fechaInicio);
   document.querySelectorAll('#se-fecha-wrap button').forEach(b=>b.style.display='none');
+  document.getElementById('se-mes').style.display='none';
+  document.getElementById('se-anio').style.display='none';
   document.getElementById('se-pistas').value = numPistasActual;
   document.getElementById('se-pistas').onchange = function(){
     const nuevo = parseInt(this.value);
@@ -320,11 +354,27 @@ function abrirNuevaSemana(){
   document.getElementById('se-titulo').textContent='Nueva semana';
   document.getElementById('se-btn-guardar').textContent='✓ Crear semana';
   document.querySelectorAll('#se-fecha-wrap button').forEach(b=>b.style.display='');
+  document.getElementById('se-mes').style.display='';
+  document.getElementById('se-anio').style.display='';
   document.getElementById('se-pistas').onchange=null;
   document.getElementById('se-aviso-reducir').style.display='none';
   document.getElementById('se-pistas').value='3';
-  // Partir del lunes de la semana actual
-  const lunes=lunesDe(new Date().toISOString().slice(0,10));
+
+  // Poblar selector de años (3 años atrás hasta 2 adelante)
+  const hoy=new Date();
+  const anioActual=hoy.getFullYear();
+  const selAnio=document.getElementById('se-anio');
+  selAnio.innerHTML='';
+  for(let y=anioActual-3;y<=anioActual+2;y++){
+    const o=document.createElement('option');
+    o.value=y; o.textContent=y;
+    if(y===anioActual) o.selected=true;
+    selAnio.appendChild(o);
+  }
+  document.getElementById('se-mes').value=hoy.getMonth();
+
+  // Ir al lunes de la semana actual
+  const lunes=lunesDe(hoy.toISOString().slice(0,10));
   actualizarPreviewSemana(lunes);
   openSheet('sh-semana');
 }
