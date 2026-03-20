@@ -212,7 +212,7 @@ function renderGeneral() {
     </div>
     ${(d.alumnosSinGrupo||[]).length ? `
     <div class="stats-sec">
-      ${secHdr('icons/alumnos.png','Alumnos sin grupo (${(d.alumnosSinGrupo||[]).length})')}
+      ${secHdr('icons/alumnos.png',`Alumnos sin grupo (${(d.alumnosSinGrupo||[]).length})`)}
       <div style="font-size:12px;color:var(--sutil);font-weight:600;line-height:1.8">
         ${(d.alumnosSinGrupo||[]).map(a=>`<span style="display:inline-block;background:#f1f5f9;border-radius:7px;padding:2px 8px;margin:2px;font-weight:700;color:var(--texto)">${a.nombre||'—'}</span>`).join('')}
       </div>

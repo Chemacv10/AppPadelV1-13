@@ -61,11 +61,18 @@
       <div class="sheet-handle"></div>
       <div class="sheet-title" id="se-titulo">Nueva semana</div>
       <input type="hidden" id="se-edit-id" value="">
-      <div class="fgrp" id="se-fecha-wrap">
-        <div class="flbl">Selecciona cualquier día de la semana</div>
-        <input class="finp" id="se-fecha" type="date" oninput="actualizarSemana(this.value)">
-        <div id="semana-preview" style="margin-top:6px;font-size:12px;color:var(--azul);font-weight:700;min-height:18px"></div>
+      <input type="hidden" id="se-fecha">
+
+      <!-- Navegador de semana -->
+      <div id="se-fecha-wrap">
+        <div class="flbl" style="margin-bottom:8px">Semana</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <button onclick="navegarSemana(-1)" style="width:40px;height:40px;border-radius:10px;border:1.5px solid var(--borde);background:var(--card);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">‹</button>
+          <div id="semana-preview" style="flex:1;text-align:center;font-size:14px;font-weight:800;color:var(--texto);background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:10px 8px"></div>
+          <button onclick="navegarSemana(1)" style="width:40px;height:40px;border-radius:10px;border:1.5px solid var(--borde);background:var(--card);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">›</button>
+        </div>
       </div>
+
       <div class="fgrp">
         <div class="flbl">Número de pistas</div>
         <select class="fsel" id="se-pistas">
@@ -228,15 +235,23 @@ function lunesDe(fechaStr){
   return d.toISOString().slice(0,10);
 }
 
-function actualizarSemana(val){
-  const lunes=lunesDe(val);
+function actualizarPreviewSemana(lunes){
   const prev=document.getElementById('semana-preview');
   if(!lunes){prev.textContent='';return;}
   document.getElementById('se-fecha').value=lunes;
   const d=new Date(lunes+'T12:00:00');
   const fin=new Date(d);fin.setDate(fin.getDate()+6);
   const m=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-  prev.textContent=`📅 Semana del ${d.getDate()} ${m[d.getMonth()]} al ${fin.getDate()} ${m[fin.getMonth()]}`;
+  prev.textContent=`${d.getDate()} ${m[d.getMonth()]} — ${fin.getDate()} ${m[fin.getMonth()]} ${fin.getFullYear()}`;
+}
+
+function navegarSemana(dir){
+  const actual=document.getElementById('se-fecha').value;
+  if(!actual) return;
+  const d=new Date(actual+'T12:00:00');
+  d.setDate(d.getDate()+(dir*7));
+  const nuevo=d.toISOString().slice(0,10);
+  actualizarPreviewSemana(nuevo);
 }
 
 function cerrarSheetSemana(){
@@ -249,15 +264,10 @@ function editarSemana(id, numPistasActual, fechaInicio){
   document.getElementById('se-edit-id').value = id;
   document.getElementById('se-titulo').textContent = 'Editar semana';
   document.getElementById('se-btn-guardar').textContent = '✓ Guardar cambios';
-  // Mostrar la semana en el preview (readonly)
-  const fechaWrap = document.getElementById('se-fecha-wrap');
-  document.getElementById('se-fecha').value = fechaInicio;
-  document.getElementById('se-fecha').disabled = true;
-  document.getElementById('se-fecha').style.opacity = '.6';
-  actualizarSemana(fechaInicio);
-  // Seleccionar pistas actuales
+  // Fecha bloqueada — solo muestra, no se puede navegar
+  actualizarPreviewSemana(fechaInicio);
+  document.querySelectorAll('#se-fecha-wrap button').forEach(b=>b.style.display='none');
   document.getElementById('se-pistas').value = numPistasActual;
-  // Mostrar aviso si reduce
   document.getElementById('se-pistas').onchange = function(){
     const nuevo = parseInt(this.value);
     document.getElementById('se-aviso-reducir').style.display =
@@ -271,7 +281,6 @@ async function guardarSemana(){
   const numPistas = parseInt(document.getElementById('se-pistas').value);
 
   if(editId){
-    // Modo edición — solo actualizar num_pistas
     try{
       await _sb.from('semanas_pista').update({num_pistas:numPistas}).eq('id',editId);
       cerrarSheetSemana();
@@ -279,9 +288,8 @@ async function guardarSemana(){
       await cargar();
     }catch(e){toast('Error al actualizar','err');console.error(e)}
   } else {
-    // Modo creación
-    const fecha=lunesDe(document.getElementById('se-fecha').value);
-    if(!fecha){toast('Selecciona la fecha','warn');return}
+    const fecha=document.getElementById('se-fecha').value;
+    if(!fecha){toast('Selecciona la semana','warn');return;}
     try{
       const s=await saveSemana({fecha_inicio:fecha,num_pistas:numPistas});
       cerrarSheetSemana();toast('Semana creada','ok');
@@ -311,22 +319,18 @@ function abrirNuevaSemana(){
   document.getElementById('se-edit-id').value='';
   document.getElementById('se-titulo').textContent='Nueva semana';
   document.getElementById('se-btn-guardar').textContent='✓ Crear semana';
-  document.getElementById('se-fecha').disabled=false;
-  document.getElementById('se-fecha').style.opacity='1';
+  document.querySelectorAll('#se-fecha-wrap button').forEach(b=>b.style.display='');
   document.getElementById('se-pistas').onchange=null;
   document.getElementById('se-aviso-reducir').style.display='none';
-  const lunes=proximoLunes();
-  document.getElementById('se-fecha').value=lunes;
-  actualizarSemana(lunes);
   document.getElementById('se-pistas').value='3';
+  // Partir del lunes de la semana actual
+  const lunes=lunesDe(new Date().toISOString().slice(0,10));
+  actualizarPreviewSemana(lunes);
   openSheet('sh-semana');
 }
 
 async function init(){
   renderNav('pistas');
-  const lunes=proximoLunes();
-  document.getElementById('se-fecha').value=lunes;
-  actualizarSemana(lunes);
   await initStore();
   renderHeader({titulo:'Escuela de Pádel',subtitulo:'Pistas',icono:'icons/pistas.png',botonDerecho:null});
   await cargar();
