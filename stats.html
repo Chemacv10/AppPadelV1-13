@@ -679,12 +679,7 @@ async function cargar() {
     const alumnosConCobroMes = new Set(cobrosEsteMes.map(c=>c.alumno_id));
     const alumnosSinPagarMes = (alumnos.data||[]).filter(a=>a.grupo_id&&!alumnosConCobroMes.has(a.id));
 
-    // Bloques pistas — horas ocupadas
-    const horasOcupadas = bloquesData.reduce((s,b)=>{
-      if(!b.hora_inicio) return s;
-      return s; // placeholder — calcular desde hora_inicio/hora_fin si disponible
-    },0);
-
+    // Bloques pistas
     const semanaIds = (semanas.data||[]).map(s=>s.id);
     let bloquesData = [];
     if (semanaIds.length) {
